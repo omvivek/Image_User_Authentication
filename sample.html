@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js"></script>
+<style>
+body {
+  background-image: url('C:\\Users\\hp\\Downloads\\flaskenvironment-20220408T005724Z-001\\flaskenvironment\\static\\crop3.jpg');
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-size: cover;
+  background-color: aquamarine;
+  text-align: center;
+  position: relative;
+}
+input[type="text"]{
+  margin: 10px;
+  border: 0;
+  padding: 10px;
+  font-family: montserrat;
+  text-transform: capitalize;
+  border-radius: 10px;
+  background: rgba(235, 230, 230, 0.4);
+}
+button[type="submit"]{
+  margin: 10px;
+  border: 0;
+  padding: 10px;
+  font-family: montserrat;
+  text-transform: capitalize;
+  border-radius: 10px;
+  background: rgba(235, 230, 230, 0.4);
+}
+.transparent{
+    opacity: 0.4;
+}
+select{
+  margin: 10px;
+  border: 0;
+  padding: 10px;
+  font-family: montserrat;
+  text-transform: capitalize;
+  border-radius: 10px;
+  background: rgba(235, 230, 230, 0.4);
+}
+</style>
+</head>
+<body>
+  <div>
+    <h1 class="transparent">YIELD PREDICTION</h1>
+      <form method='POST'>
+        <p><input type="text" name="a" placeholder="Crop Year: "  /></p>
+        <p><input type="text" name="b" placeholder="Area: "  /></p>
+        <p><input type="text" name="c" placeholder="State: "  /></p>
+        <p><input type="text" name="d" placeholder="District: "  /></p>
+        <p><input type="text" name="e" placeholder="Crop Type: "  /></p>
+        <!--<label for="Season">Season:</label>-->
+        <select id="season" name="f">
+          <option value="Season">Season</option>
+          <option value="Autumn">Autumn</option>
+          <option value="Kharif">Kharif</option>
+          <option value="Rabi">Rabi</option>
+          <option value="Summer">Summer</option>
+          <option value="Winter">Winter</option>
+        </select><br><br>
+        <button type="submit" formaction="http://127.0.0.1:5000/predict">Submit</button>
+        </form>
+  </div>
+</body>
+</html>

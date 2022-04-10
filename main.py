@@ -1,4 +1,5 @@
-from flask import Flask, flash, redirect, url_for, request, Response, render_template_string
+
+from flask import Flask,flash,redirect,url_for,request,Response,render_template_string
 import cv2
 import face_recognition
 from flask_mysqldb import MySQL
@@ -17,9 +18,9 @@ app.config['MYSQL_DB'] = 'company'
 
 mysql = MySQL(app)
 
+
 # Load the cascade
 face_cascade = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
-
 
 def gen():
     cap = cv2.VideoCapture(0)
@@ -32,7 +33,6 @@ def gen():
                b'Content-Type: image/jpeg\r\n\r\n' + open('t.jpg', 'rb').read() + b'\r\n')
     # Release the VideoCapture object
     cap.release()
-
 
 @app.route('/')
 def index():
@@ -136,22 +136,17 @@ def index():
   </div>
 </body>
 </html>""")
-
-
 @app.route('/guest/<guest>')
 def hello_guest(guest):
     return 'hello %s please login' % guest
-
-
 @app.route('/user/<name>')
 def hello_user(name):
     if name == 'admin':
         return redirect(url_for('hello_admin'))
     else:
-        return redirect(url_for('hello_guest', guest=name))
-
-
+        return redirect(url_for('hello_guest',guest=name))
 @app.route('/image')
+
 def image():
     # define a video capture object
     vid = cv2.VideoCapture(0)
@@ -291,12 +286,11 @@ img.m{
 </body>
 </html>''')
 
-
 @app.route('/video_feed')
 def video_feed():
     """Video streaming route. Put this in the src attribute of an img tag."""
     return Response(gen(),
-                    mimetype='multipart/x-mixed-replace; boundary=frame')
+                mimetype='multipart/x-mixed-replace; boundary=frame')
 
 
 def gen1():
@@ -318,7 +312,6 @@ def gen1():
     # Release the VideoCapture object
     cap.release()
 
-
 @app.route('/capture1')
 def capture1():
     """Video streaming"""
@@ -331,7 +324,7 @@ def capture1():
   <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.slim.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js"></script>
-
+  
 <style>
       @import url(https://fonts.googleapis.com/css?family=Oxygen:400,300);
       @import url(https://fonts.googleapis.com/css?family=Montserrat:700);
@@ -431,47 +424,43 @@ img.m{
 </body>
 </html>''')
 
-
 @app.route('/video_feed1')
 def video_feed1():
     """Video streaming route. Put this in the src attribute of an img tag."""
     return Response(gen1(),
-                    mimetype='multipart/x-mixed-replace; boundary=frame')
+                mimetype='multipart/x-mixed-replace; boundary=frame')
 
-
-@app.route('/welcome', methods=['POST', 'GET'])
+@app.route('/welcome',methods=['POST','GET'])
 def welcome():
-    if request.method == 'POST':
-        user = request.form['nm']
-        return redirect(url_for('hello_user', name=user))
+    if request.method=='POST':
+        user=request.form['nm']
+        return redirect(url_for('hello_user',name=user))
     else:
-        user = request.args.get('nm')
-        return redirect(url_for('hello_user', name=user))
-
+        user=request.args.get('nm')
+        return redirect(url_for('hello_user',name=user))
 
 @app.route('/check', methods=['POST', 'GET'])
 def check():
-    try:
+      try:
         if request.method == 'GET':
-            return p_userid()
+              return p_userid()
         if request.method == 'POST':
-            global id1
-            id1 = request.form['id1']
-            x = pd.read_sql_query('select id from signup', mysql.connection)
-            x1 = x['id']
-            if id1:
-                for i in x1:
-                    if id1 == i:
-                        return capture1()
-                        break
-                    else:
-                        return v_userid()
-            else:
-                return p_userid()
-    except:
+              global id1
+              id1 = request.form['id1']
+              x = pd.read_sql_query('select id from signup',mysql.connection)
+              x1=x['id']
+              if id1:
+                    for i in x1:
+                          if id1 == i:
+                                return capture1()
+                                break
+                          else:
+                                return v_userid()
+              else:
+                    return p_userid()
+      except:
         return p_userid()
-
-
+            
 @app.route('/login')
 def login():
     try:
@@ -483,7 +472,7 @@ def login():
         return capture()
     else:
         cursor = mysql.connection.cursor()
-        cursor.execute("update signup set img = %s where id = %s ", ('E:\pt2\\' + str(id) + '.jpg', id))
+        cursor.execute("update signup set img = %s where id = %s ",('E:\pt2\\'+str(id)+'.jpg',id))
         mysql.connection.commit()
         cursor.close()
         return render_template_string("""<!DOCTYPE html>
@@ -627,20 +616,19 @@ def save():
             return signup()
 
         if request.method == 'POST':
-            global id, password
+            global id,password
             name = request.form['name']
             id = request.form['id']
             password = request.form['password']
             c_password = request.form['c_password']
             cursor = mysql.connection.cursor()
-            # cursor.execute("drop table customers")
-            cursor.execute(
-                "CREATE TABLE if not exists signup (name VARCHAR(255), id VARCHAR(255) primary key,password VARCHAR(255),c_password VARCHAR(255),img VARCHAR(255) NOT NULL)")
+        # cursor.execute("drop table customers")
+            cursor.execute("CREATE TABLE if not exists signup (name VARCHAR(255), id VARCHAR(255) primary key,password VARCHAR(255),c_password VARCHAR(255),img VARCHAR(255) NOT NULL)")
             if name and id and password and c_password:
-                passwd = password
-                SpecialSym = ['$', '@', '#', '%']
+                passwd=password
+                SpecialSym =['$', '@', '#', '%']
                 if len(passwd) < 6:
-                    return render_template_string("""<!DOCTYPE html>
+                      return render_template_string("""<!DOCTYPE html>
 <html>
 <head>
 <title>Sign Up</title>
@@ -650,7 +638,7 @@ def save():
   <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.slim.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js"></script>
-
+  
 <style>
       @import url(https://fonts.googleapis.com/css?family=Oxygen:400,300);
 @import url(https://fonts.googleapis.com/css?family=Montserrat:700);
@@ -777,7 +765,7 @@ $('.alert').alert()
 </body>
 </html>""")
                 if len(passwd) > 20:
-                    return render_template_string("""<!DOCTYPE html>
+                      return render_template_string("""<!DOCTYPE html>
 <html>
 <head>
 <title>Sign Up</title>
@@ -787,7 +775,7 @@ $('.alert').alert()
   <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.slim.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js"></script>
-
+  
 <style>
       @import url(https://fonts.googleapis.com/css?family=Oxygen:400,300);
 @import url(https://fonts.googleapis.com/css?family=Montserrat:700);
@@ -914,7 +902,7 @@ $('.alert').alert()
 </body>
 </html>""")
                 if not any(char.isdigit() for char in passwd):
-                    return render_template_string("""<!DOCTYPE html>
+                      return render_template_string("""<!DOCTYPE html>
 <html>
 <head>
 <title>Sign Up</title>
@@ -924,7 +912,7 @@ $('.alert').alert()
   <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.slim.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js"></script>
-
+  
 <style>
       @import url(https://fonts.googleapis.com/css?family=Oxygen:400,300);
 @import url(https://fonts.googleapis.com/css?family=Montserrat:700);
@@ -1051,7 +1039,7 @@ $('.alert').alert()
 </body>
 </html>""")
                 if not any(char.isupper() for char in passwd):
-                    return render_template_string("""<!DOCTYPE html>
+                      return render_template_string("""<!DOCTYPE html>
 <html>
 <head>
 <title>Sign Up</title>
@@ -1061,7 +1049,7 @@ $('.alert').alert()
   <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.slim.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js"></script>
-
+  
 <style>
       @import url(https://fonts.googleapis.com/css?family=Oxygen:400,300);
 @import url(https://fonts.googleapis.com/css?family=Montserrat:700);
@@ -1188,7 +1176,7 @@ $('.alert').alert()
 </body>
 </html>""")
                 if not any(char.islower() for char in passwd):
-                    return render_template_string("""<!DOCTYPE html>
+                      return render_template_string("""<!DOCTYPE html>
 <html>
 <head>
 <title>Sign Up</title>
@@ -1198,7 +1186,7 @@ $('.alert').alert()
   <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.slim.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js"></script>
-
+  
 <style>
       @import url(https://fonts.googleapis.com/css?family=Oxygen:400,300);
 @import url(https://fonts.googleapis.com/css?family=Montserrat:700);
@@ -1325,7 +1313,7 @@ $('.alert').alert()
 </body>
 </html>""")
                 if not any(char in SpecialSym for char in passwd):
-                    return render_template_string("""<!DOCTYPE html>
+                      return render_template_string("""<!DOCTYPE html>
 <html>
 <head>
 <title>Sign Up</title>
@@ -1335,7 +1323,7 @@ $('.alert').alert()
   <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.slim.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js"></script>
-
+  
 <style>
       @import url(https://fonts.googleapis.com/css?family=Oxygen:400,300);
 @import url(https://fonts.googleapis.com/css?family=Montserrat:700);
@@ -1461,16 +1449,15 @@ $('.alert').alert()
 </script>
 </body>
 </html>""")
-
-                x = pd.read_sql_query('select id from signup', mysql.connection)
-                x1 = x['id']
+                      
+                x=pd.read_sql_query('select id from signup',mysql.connection)
+                x1=x['id']
                 for i in x1:
-                    if id == i:
-                        return user_id()
-                        break
+                      if id == i:
+                            return user_id()
+                            break
                 if password == c_password:
-                    cursor.execute('''INSERT INTO signup (name, id, password, c_password) VALUES (%s, %s, %s, %s)''',
-                                   (name, id, password, c_password))
+                    cursor.execute('''INSERT INTO signup (name, id, password, c_password) VALUES (%s, %s, %s, %s)''', (name, id, password, c_password))
                     mysql.connection.commit()
                     cursor.close()
                     return capture()
@@ -1479,8 +1466,7 @@ $('.alert').alert()
             else:
                 return empty()
     except:
-        return empty()
-
+        return empty()  
 
 @app.route('/signup')
 def signup():
@@ -1585,6 +1571,15 @@ input[type="text"]{
   color: black;
 }
 
+input[type="password"]{
+  margin: 10px;
+  border: 0;
+  padding: 10px;
+  font-family: montserrat;
+  text-transform: capitalize;
+  border-radius: 10px;
+  color: black;
+}
 </style>
 </head>
 <body>
@@ -1597,8 +1592,8 @@ input[type="text"]{
         <form method='POST'>
         <p><input type="text" name="name" placeholder="Name : "  /></p>
         <p><input type="text" name="id" placeholder="User Id : "  /></p>
-          <p><input type="text" name="password" placeholder="Password : "></p>
-          <p><input type="text" name="c_password" placeholder="Confirm Password : "></p>
+          <p><input type="password" name="password" placeholder="Password : "></p>
+          <p><input type="password" name="c_password" placeholder="Confirm Password : "></p>
           <!--<button type="submit" formaction="http://127.0.0.1:5000/capture">Capture Image</button><br><br>-->
         <button type="submit" formaction="http://127.0.0.1:5000/save">Submit</button>
         </form>
@@ -1608,7 +1603,6 @@ input[type="text"]{
   </div>
 </body>
 </html>""")
-
 
 @app.route('/success')
 def success():
@@ -1700,7 +1694,7 @@ def fail():
     return render_template_string("""<!DOCTYPE html>
 <html>
 <head>
-<title>Thanks</title>
+<title>Authentication Failed</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css">
   <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.slim.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
@@ -1779,30 +1773,28 @@ def fail():
 </body>
 </html>""")
 
-
 @app.route('/checkimage')
 def checkimage():
     try:
-        baseimg = face_recognition.load_image_file("t.jpg")
-        baseimg = cv2.cvtColor(baseimg, cv2.COLOR_BGR2RGB)
+        baseimg=face_recognition.load_image_file("t.jpg")
+        baseimg=cv2.cvtColor(baseimg,cv2.COLOR_BGR2RGB)
 
-        myface = face_recognition.face_locations(baseimg)[0]
-        encodemyface = face_recognition.face_encodings(baseimg)[0]
-        cv2.rectangle(baseimg, (myface[3], myface[0]), (myface[1], myface[2]), (255, 0, 255), 2)
+        myface=face_recognition.face_locations(baseimg)[0]
+        encodemyface=face_recognition.face_encodings(baseimg)[0]
+        cv2.rectangle(baseimg,(myface[3],myface[0]),(myface[1],myface[2]),(255,0,255),2)
 
-        sampleimg = face_recognition.load_image_file("vivek.jpg")
-        sampleimg = cv2.cvtColor(sampleimg, cv2.COLOR_BGR2RGB)
+        sampleimg=face_recognition.load_image_file("vivek.jpg")
+        sampleimg=cv2.cvtColor(sampleimg,cv2.COLOR_BGR2RGB)
         samplefacetest = face_recognition.face_locations(sampleimg)[0]
         encodesamplefacetest = face_recognition.face_encodings(sampleimg)[0]
     except IndexError as e:
         return fail()
         sys.exit()
     except:
-        return capture1()
+          return capture1()
 
-    cv2.rectangle(sampleimg, (samplefacetest[3], samplefacetest[0]), (samplefacetest[1], samplefacetest[2]),
-                  (255, 0, 255), 2)
-    result = face_recognition.compare_faces([encodemyface], encodesamplefacetest)
+    cv2.rectangle(sampleimg, (samplefacetest[3], samplefacetest[0]), (samplefacetest[1], samplefacetest[2]), (255, 0, 255), 2)
+    result = face_recognition.compare_faces([encodemyface],encodesamplefacetest)
 
     resultstring = str(result)
 
@@ -1810,7 +1802,6 @@ def checkimage():
         return capture4()
     else:
         return fail()
-
 
 @app.route('/p_cp')
 def p_cp():
@@ -1824,7 +1815,7 @@ def p_cp():
   <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.slim.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js"></script>
-
+  
 <style>
       @import url(https://fonts.googleapis.com/css?family=Oxygen:400,300);
 @import url(https://fonts.googleapis.com/css?family=Montserrat:700);
@@ -1964,7 +1955,7 @@ def empty():
   <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.slim.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js"></script>
-
+  
 <style>
       @import url(https://fonts.googleapis.com/css?family=Oxygen:400,300);
 @import url(https://fonts.googleapis.com/css?family=Montserrat:700);
@@ -2104,7 +2095,7 @@ def user_id():
   <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.slim.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js"></script>
-
+  
 <style>
       @import url(https://fonts.googleapis.com/css?family=Oxygen:400,300);
 @import url(https://fonts.googleapis.com/css?family=Montserrat:700);
@@ -2231,10 +2222,9 @@ $('.alert').alert()
 </body>
 </html>""")
 
-
 @app.route('/v_userid')
 def v_userid():
-    return render_template_string("""<!DOCTYPE html>
+      return render_template_string("""<!DOCTYPE html>
     <html>
     <head>
     <title>Login Page</title>
@@ -2379,7 +2369,7 @@ $('.alert').alert()
 
 @app.route('/p_userid')
 def p_userid():
-    return render_template_string("""<!DOCTYPE html>
+      return render_template_string("""<!DOCTYPE html>
     <html>
     <head>
     <title>Login Page</title>
@@ -2523,25 +2513,23 @@ $('.alert').alert()
 
 
 def gen2():
-    # cap = cv2.VideoCapture(0)
-    # while True:
-    # Read the frame
-    # _, img = cap.read()
-    # Convert to grayscale
-    """gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    # Detect the faces
-    faces = face_cascade.detectMultiScale(gray, 1.1, 1)
-    # Draw the rectangle around each face
-    for (x, y, w, h) in faces:
-        cv2.rectangle(img, (x, y), (x + w, y + h), (170, 255, 0), 1)"""
-    # Display
-    # cv2.imwrite('vivek.jpg', img)
-    yield (b'--frame\r\n'
-           b'Content-Type: image/jpeg\r\n\r\n' + open('vivek.jpg', 'rb').read() + b'\r\n')
-
-
-# Release the VideoCapture object
-# cap.release()
+    #cap = cv2.VideoCapture(0)
+    #while True:
+        # Read the frame
+        #_, img = cap.read()
+        # Convert to grayscale
+        """gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        # Detect the faces
+        faces = face_cascade.detectMultiScale(gray, 1.1, 1)
+        # Draw the rectangle around each face
+        for (x, y, w, h) in faces:
+            cv2.rectangle(img, (x, y), (x + w, y + h), (170, 255, 0), 1)"""
+        # Display
+        #cv2.imwrite('vivek.jpg', img)
+        yield (b'--frame\r\n'
+               b'Content-Type: image/jpeg\r\n\r\n' + open('vivek.jpg', 'rb').read() + b'\r\n')
+    # Release the VideoCapture object
+    #cap.release()
 
 @app.route('/capture2')
 def capture2():
@@ -2555,7 +2543,7 @@ def capture2():
   <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.slim.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js"></script>
-
+  
 <style>
       @import url(https://fonts.googleapis.com/css?family=Oxygen:400,300);
       @import url(https://fonts.googleapis.com/css?family=Montserrat:700);
@@ -2655,34 +2643,31 @@ img.m{
 </body>
 </html>''')
 
-
 @app.route('/video_feed2')
 def video_feed2():
     """Video streaming route. Put this in the src attribute of an img tag."""
     return Response(gen2(),
-                    mimetype='multipart/x-mixed-replace; boundary=frame')
+                mimetype='multipart/x-mixed-replace; boundary=frame')
 
 
 def gen3():
-    # cap = cv2.VideoCapture(0)
-    # while True:
-    # Read the frame
-    # _, img = cap.read()
-    # Convert to grayscale
-    """gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    # Detect the faces
-    faces = face_cascade.detectMultiScale(gray, 1.1, 1)
-    # Draw the rectangle around each face
-    for (x, y, w, h) in faces:
-        cv2.rectangle(img, (x, y), (x + w, y + h), (170, 255, 0), 1)"""
-    # Display
-    # cv2.imwrite('vivek.jpg', img)
-    yield (b'--frame\r\n'
-           b'Content-Type: image/jpeg\r\n\r\n' + open('t.jpg', 'rb').read() + b'\r\n')
-
-
-# Release the VideoCapture object
-# cap.release()
+    #cap = cv2.VideoCapture(0)
+    #while True:
+        # Read the frame
+        #_, img = cap.read()
+        # Convert to grayscale
+        """gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        # Detect the faces
+        faces = face_cascade.detectMultiScale(gray, 1.1, 1)
+        # Draw the rectangle around each face
+        for (x, y, w, h) in faces:
+            cv2.rectangle(img, (x, y), (x + w, y + h), (170, 255, 0), 1)"""
+        # Display
+        #cv2.imwrite('vivek.jpg', img)
+        yield (b'--frame\r\n'
+               b'Content-Type: image/jpeg\r\n\r\n' + open('t.jpg', 'rb').read() + b'\r\n')
+    # Release the VideoCapture object
+    #cap.release()
 
 
 @app.route('/capture3')
@@ -2796,13 +2781,11 @@ img.m{
 </body>
 </html>''')
 
-
 @app.route('/video_feed3')
 def video_feed3():
     """Video streaming route. Put this in the src attribute of an img tag."""
     return Response(gen3(),
-                    mimetype='multipart/x-mixed-replace; boundary=frame')
-
+                mimetype='multipart/x-mixed-replace; boundary=frame')
 
 def gen4():
     cap = cv2.VideoCapture(0)
@@ -2815,31 +2798,31 @@ def gen4():
         faces = face_cascade.detectMultiScale(gray, 1.1, 1)
         # Draw the rectangle around each face
         img1 = cv2.imread('vivek1.jpg')
-        result = DeepFace.analyze(img1, actions=['emotion'], enforce_detection=False)
-        re = result["dominant_emotion"]
+        result = DeepFace.analyze(img1,actions=['emotion'],enforce_detection=False)
+        re=result["dominant_emotion"]
         # font
         font = cv2.FONT_HERSHEY_SIMPLEX
-
+  
         # org
         org = (50, 50)
-
+  
         # fontScale
         fontScale = 1
-
+   
         # Blue color in BGR
         color = (255, 0, 0)
-
+  
         # Line thickness of 2 px
         thickness = 2
-
-        cv2.putText(img, str(re), org, font, fontScale, color, thickness, cv2.LINE_AA)
+   
+        cv2.putText(img,str(re), org, font, fontScale, color, thickness, cv2.LINE_AA)
 
         # Display
         cv2.imwrite('vivek1.jpg', img)
         yield (b'--frame\r\n'
                b'Content-Type: image/jpeg\r\n\r\n' + open('vivek1.jpg', 'rb').read() + b'\r\n')
     # Release the VideoCapture object
-    # cap.release()
+    #cap.release()
 
 
 @app.route('/capture4')
@@ -2953,31 +2936,30 @@ img.m{
 </body>
 </html>''')
 
-
 @app.route('/video_feed4')
 def video_feed4():
     """Video streaming route. Put this in the src attribute of an img tag."""
     return Response(gen4(),
-                    mimetype='multipart/x-mixed-replace; boundary=frame')
-
+                mimetype='multipart/x-mixed-replace; boundary=frame')
 
 @app.route('/<name>')
-def home(name=None):
+ 
+def home(name = None):
+ 
     return render_template_string(""" <!DOCTYPE html>
 <html>
-
+ 
 {% if name %}
-
+ 
 <h1> Hello hi how are you {{name}}</h1>
-
+ 
 {% else %}
-
+ 
 <h1> Hello World!</h1>
-
+ 
 {% endif %}
-
+ 
 </html>""", name=name)
-
 
 if __name__ == '__main__':
     app.run(debug=True)
